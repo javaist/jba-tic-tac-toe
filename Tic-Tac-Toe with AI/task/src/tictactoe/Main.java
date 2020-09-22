@@ -1,5 +1,6 @@
 package tictactoe;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -7,49 +8,59 @@ public class Main {
     static String input;
     static Scanner scanner = new Scanner(System.in);
     static char letter;
+    private static final Random random = new Random();
 
     public static void main(String[] args) {
 
-        System.out.println("Enter cells: ");
-        input = scanner.next();
-//        input = "_________";
+//        System.out.println("Enter cells: ");
+//        input = scanner.next();
+        input = "_________";
         field = (int) Math.sqrt(input.length());
 
         gui();
 
         boolean in_game;
         int result;
-        int x_counter = 0;
-        int o_counter = 0;
-        for (int i = 0; i < input.length(); i++) {
-            x_counter += input.charAt(i) == 'X' ? 1 : 0;
-            o_counter += input.charAt(i) == 'O' ? 1 : 0;
-//            System.out.println("x_counter: " + x_counter + "; o_counter: " + o_counter);
-        }
-        letter = x_counter == o_counter ? 'X' : 'O';
-//        System.out.println(letter);
-        do {
-            in_game = turn();
-        } while (in_game);
-        gui();
-        result = logic();
+        letter = 'X';
 
-//        do {
-//            do {
-//                in_game = turn(letter);
-//            } while (in_game);
-//            gui();
-//            result = logic();
-//            letter = 'X' == letter ? 'O' : 'X';
-//        } while (result < 2);
+        do {
+            do {
+                in_game = letter == 'X' ? human_turn() : computer_turn();
+            } while (in_game);
+            gui();
+            result = logic();
+            letter = 'X' == letter ? 'O' : 'X';
+        } while (result < 2);
 
 
         message(result);
 
     }
 
+    private static boolean computer_turn() {
+        int[] empty = new int[input.length()];
+        int counter = 0;
+        for (int i = 0; i < empty.length; i++) {
+            if (input.charAt(i) == '_') {
+                empty[counter] = i;
+                counter++;
+            }
+        }
+        int hit = empty[random.nextInt(counter)];
+        if (input.charAt(hit) == 'X' || input.charAt(hit) == 'O') {
+            System.out.println("Something went totally wrong!");
+            return true;
+        } else {
+            char[] chars = input.toCharArray();
+            chars[hit] = letter;
+            input = String.valueOf(chars);
+            System.out.println("Making move level \"easy\"");
+        }
+        return false;
+    }
 
-    static boolean turn() {
+
+    static boolean human_turn() {
         int x;
         int y;
         System.out.println("Enter the coordinates: ");
@@ -73,6 +84,7 @@ public class Main {
             return true;
         }
         int hit = coords2index(x, y);
+        System.out.println(x + " " + y + " " + hit);
         if (input.charAt(hit) == 'X' || input.charAt(hit) == 'O') {
             System.out.println("This cell is occupied! Choose another one!");
             return true;
@@ -90,6 +102,7 @@ public class Main {
         y = field - y;
         return y * field + x;
     }
+
 
     static boolean winner(char letter) {
         String strike = String.valueOf(letter).repeat(Math.max(0, field));
