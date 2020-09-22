@@ -6,27 +6,42 @@ public class Main {
     static int field;
     static String input;
     static Scanner scanner = new Scanner(System.in);
+    static char letter;
 
     public static void main(String[] args) {
 
-//        System.out.println("Enter cells: ");
-//        input = scanner.next();
-        input = "_________";
+        System.out.println("Enter cells: ");
+        input = scanner.next();
+//        input = "_________";
         field = (int) Math.sqrt(input.length());
 
         gui();
 
         boolean in_game;
         int result;
-        char letter = 'X';
+        int x_counter = 0;
+        int o_counter = 0;
+        for (int i = 0; i < input.length(); i++) {
+            x_counter += input.charAt(i) == 'X' ? 1 : 0;
+            o_counter += input.charAt(i) == 'O' ? 1 : 0;
+//            System.out.println("x_counter: " + x_counter + "; o_counter: " + o_counter);
+        }
+        letter = x_counter == o_counter ? 'X' : 'O';
+//        System.out.println(letter);
         do {
-            do {
-                in_game = turn(letter);
-            } while (in_game);
-            gui();
-            result = logic();
-            letter = 'X' == letter ? 'O' : 'X';
-        } while (result < 2);
+            in_game = turn();
+        } while (in_game);
+        gui();
+        result = logic();
+
+//        do {
+//            do {
+//                in_game = turn(letter);
+//            } while (in_game);
+//            gui();
+//            result = logic();
+//            letter = 'X' == letter ? 'O' : 'X';
+//        } while (result < 2);
 
 
         message(result);
@@ -34,7 +49,7 @@ public class Main {
     }
 
 
-    static boolean turn(char letter) {
+    static boolean turn() {
         int x;
         int y;
         System.out.println("Enter the coordinates: ");
@@ -140,7 +155,8 @@ public class Main {
         boolean win_x = winner('X');
         boolean win_o = winner('O');
         if (win_x && win_o) {
-            return 5;
+            return letter == 'X' ? 3 : 4;
+//            return 5;
         } else if (win_x) {
             return 3;
         } else if (win_o) {
